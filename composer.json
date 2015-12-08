@@ -11,11 +11,15 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "illuminate/support": "5.1.x"
+        "illuminate/support": "~5.1",
+        "illuminate/filesystem": "~5.1",
+        "illuminate/console": "~5.1",
+        "illuminate/foundation": "~5.1",
+        "illuminate/database": "~5.1"
     },
     "autoload": {
         "psr-4": {
-            "media101\\workflow\\": "src"
+            "Media101\\Workflow\\": "src/"
         }
     }
 }

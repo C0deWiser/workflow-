@@ -1,0 +1,102 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateWorkflowTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('{{entitiesTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+
+            $table->index('code');
+        });
+
+        Schema::create('{{statesTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('entity_id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+
+            $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
+            $table->index('code');
+        });
+
+        Schema::create('{{relationsTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('entity_id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+
+            $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
+            $table->index('code');
+        });
+
+        Schema::create('{{featuresTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('entity_id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+
+            $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
+            $table->index('code');
+        });
+
+        Schema::create('{{actionsTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('entity_id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+
+            $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
+            $table->index('code');
+        });
+
+        Schema::create('{{rolesTable}}', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('code');
+            $table->string('name')->nullable()->default(null);
+        });
+
+        Schema::create('{{permissionsTable}}', function (Blueprint $table) {
+            $table->bigInteger('entity_id');
+            $table->bigInteger('action_id')->nullable()->default(null);
+            $table->bigInteger('target_state_id')->nullable()->default(null);
+            $table->bigInteger('role_id')->nullable()->default(null);
+            $table->bigInteger('relation_id')->nullable()->default(null);
+            $table->bigInteger('state_id')->nullable()->default(null);
+            $table->bigInteger('feature_id')->nullable()->default(null);
+
+            $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}');
+            $table->foreign('action_id')->references('id')->on('{{actionsTable}}');
+            $table->foreign('target_state_id')->references('id')->on('{{statesTable}}');
+            $table->foreign('role_id')->references('id')->on('{{rolesTable}}');
+            $table->foreign('relation_id')->references('id')->on('{{relationsTable}}');
+            $table->foreign('state_id')->references('id')->on('{{statesTable}}');
+            $table->foreign('feature_id')->references('id')->on('{{featuresTable}}');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('{{entitiesTable}}');
+        Schema::drop('{{actionsTable}}');
+        Schema::drop('{{relationsTable}}');
+        Schema::drop('{{featuresTable}}');
+        Schema::drop('{{rolesTable}}');
+        Schema::drop('{{permissionsTable}}');
+    }
+}
