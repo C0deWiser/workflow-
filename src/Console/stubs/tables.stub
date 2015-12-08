@@ -22,7 +22,7 @@ class CreateWorkflowTables extends Migration
 
         Schema::create('{{statesTable}}', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('entity_id');
+            $table->bigInteger('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -32,7 +32,7 @@ class CreateWorkflowTables extends Migration
 
         Schema::create('{{relationsTable}}', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('entity_id');
+            $table->bigInteger('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -42,7 +42,7 @@ class CreateWorkflowTables extends Migration
 
         Schema::create('{{featuresTable}}', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('entity_id');
+            $table->bigInteger('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -52,7 +52,7 @@ class CreateWorkflowTables extends Migration
 
         Schema::create('{{actionsTable}}', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('entity_id');
+            $table->bigInteger('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -67,13 +67,13 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{permissionsTable}}', function (Blueprint $table) {
-            $table->bigInteger('entity_id');
-            $table->bigInteger('action_id')->nullable()->default(null);
-            $table->bigInteger('target_state_id')->nullable()->default(null);
-            $table->bigInteger('role_id')->nullable()->default(null);
-            $table->bigInteger('relation_id')->nullable()->default(null);
-            $table->bigInteger('state_id')->nullable()->default(null);
-            $table->bigInteger('feature_id')->nullable()->default(null);
+            $table->bigInteger('entity_id')->unsigned();
+            $table->bigInteger('action_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('target_state_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('role_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('relation_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('state_id')->unsigned()->nullable()->default(null);
+            $table->bigInteger('feature_id')->unsigned()->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}');
             $table->foreign('action_id')->references('id')->on('{{actionsTable}}');
