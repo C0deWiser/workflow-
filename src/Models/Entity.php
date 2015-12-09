@@ -3,6 +3,7 @@
 namespace Media101\Workflow\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * Entity represents the class under workflow access control.
@@ -11,10 +12,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code
  * @property string $name
  *
- * @property State[] $states
- * @property Relation[] $relations
- * @property Feature[] $features
- * @property Action[] $actions
+ * @property State[]|Collection $states
+ * @property Relation[]|Collection $relations
+ * @property Feature[]|Collection $features
+ * @property Action[]|Collection $actions
  *
  * @package Media101\Workflow\Models
  */

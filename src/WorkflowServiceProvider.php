@@ -2,6 +2,7 @@
 
 namespace Media101\Workflow;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class WorkflowServiceProvider extends ServiceProvider
@@ -30,7 +31,20 @@ class WorkflowServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(dirname(__DIR__) . '/config/workflow.php', 'workflow');
-        $this->app->singleton('workflow.manager', WorkflowManager::class);
+        $this->registerWorkflow();
+        $this->app->singleton(Preloader::class);
+    }
+
+    /**
+     * Register main service
+     */
+    protected function registerWorkflow()
+    {
+        $this->app->singleton(Workflow::class, function(Application $app) {
+            return new Workflow($app, function() use($app) {
+                return \Auth::user() ?: "guest";
+            });
+        });
     }
 
     /**
@@ -38,6 +52,6 @@ class WorkflowServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ 'workflow.manager' ];
+        return [ Workflow::class, Preloader::class ];
     }
 }

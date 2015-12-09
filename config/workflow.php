@@ -1,7 +1,5 @@
 <?php
 
-// [entity] [state] [role] [relation] [feature] [action]
-
 return [
     'database' => [
         'permissions_table' => 'workflow_permissions',
@@ -11,5 +9,10 @@ return [
         'relations_table'   => 'workflow_relations',
         'features_table'    => 'workflow_features',
         'actions_table'     => 'workflow_actions',
+    ],
+    'defaults' => [
+        'actions' => [
+            'view', 'edit', 'delete',
+        ],
     ],
 ];
