@@ -12,7 +12,13 @@ use Media101\Workflow\Models\Role;
 use Media101\Workflow\Models\State;
 
 /**
- * Base workflow module policy, allowing to check access even for anonymous users.
+ * Workflow policy allows action (ability) on item if there is a permission written in the permissions table
+ * with references entity class of this item, action referring to the checked one, with no state specified
+ * or the state equal to the state of the item, null relations reference (which mean any relation)
+ * or one of the relations the item currently has with the user, null feature or one of the features of the current item
+ * and null role or one of the roles of the user.
+ *
+ * So, it any of such allowing records are in the permissions table - access will be granted, and denied otherwise.
  *
  * @package Media101\Workflow
  */
