@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'database' => [
         'permissions_table' => 'workflow_permissions',
         'entities_table'    => 'workflow_entities',
@@ -10,9 +11,8 @@ return [
         'features_table'    => 'workflow_features',
         'actions_table'     => 'workflow_actions',
     ],
+
     'defaults' => [
-        'actions' => [
-            'view', 'edit', 'delete',
-        ],
+        'actions'           => [ 'view', 'edit', 'delete' ],
     ],
 ];
