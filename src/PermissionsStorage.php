@@ -2,6 +2,7 @@
 
 namespace Media101\Workflow;
 
+use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
 use Media101\Workflow\Models\Entity;
 
 /**
@@ -9,7 +10,7 @@ use Media101\Workflow\Models\Entity;
  *
  * @package Media101\Workflow
  */
-class Preloader
+class PermissionsStorage implements PermissionsStorageContract
 {
     protected $loaded = false;
 

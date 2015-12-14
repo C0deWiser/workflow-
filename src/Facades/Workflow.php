@@ -3,6 +3,7 @@
 namespace Media101\Workflow\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Media101\Workflow\Contracts\Workflow as WorkflowContract;
 
 /**
  * @see \Media101\Workflow\Contracts\Workflow
@@ -16,6 +17,6 @@ class Workflow extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Media101\Workflow\Workflow';
+        return WorkflowContract::class;
     }
 }

@@ -13,7 +13,7 @@ class CreateWorkflowTables extends Migration
     public function up()
     {
         Schema::create('{{entitiesTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -21,8 +21,8 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{statesTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('entity_id')->unsigned();
+            $table->increments('id');
+            $table->integer('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -31,8 +31,8 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{relationsTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('entity_id')->unsigned();
+            $table->increments('id');
+            $table->integer('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -41,8 +41,8 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{featuresTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('entity_id')->unsigned();
+            $table->increments('id');
+            $table->integer('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -51,8 +51,8 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{actionsTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('entity_id')->unsigned();
+            $table->increments('id');
+            $table->integer('entity_id')->unsigned();
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
@@ -61,19 +61,19 @@ class CreateWorkflowTables extends Migration
         });
 
         Schema::create('{{rolesTable}}', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('code');
             $table->string('name')->nullable()->default(null);
         });
 
         Schema::create('{{permissionsTable}}', function (Blueprint $table) {
-            $table->bigInteger('entity_id')->unsigned();
-            $table->bigInteger('action_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('target_state_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('role_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('relation_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('state_id')->unsigned()->nullable()->default(null);
-            $table->bigInteger('feature_id')->unsigned()->nullable()->default(null);
+            $table->integer('entity_id')->unsigned();
+            $table->integer('action_id')->unsigned()->nullable()->default(null);
+            $table->integer('target_state_id')->unsigned()->nullable()->default(null);
+            $table->integer('role_id')->unsigned()->nullable()->default(null);
+            $table->integer('relation_id')->unsigned()->nullable()->default(null);
+            $table->integer('state_id')->unsigned()->nullable()->default(null);
+            $table->integer('feature_id')->unsigned()->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}');
             $table->foreign('action_id')->references('id')->on('{{actionsTable}}');
@@ -82,6 +82,14 @@ class CreateWorkflowTables extends Migration
             $table->foreign('relation_id')->references('id')->on('{{relationsTable}}');
             $table->foreign('state_id')->references('id')->on('{{statesTable}}');
             $table->foreign('feature_id')->references('id')->on('{{featuresTable}}');
+        });
+
+        Schema::create('{{roleUserTable}}', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned();
+            $table->integer('role_id')->unsigned();
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('role_id')->references('id')->on('{{rolesTable}}');
         });
     }
 
@@ -92,11 +100,16 @@ class CreateWorkflowTables extends Migration
      */
     public function down()
     {
-        Schema::drop('{{entitiesTable}}');
+        Schema::drop('{{roleUserTable}}');
+
+        Schema::drop('{{permissionsTable}}');
+
         Schema::drop('{{actionsTable}}');
         Schema::drop('{{relationsTable}}');
         Schema::drop('{{featuresTable}}');
         Schema::drop('{{rolesTable}}');
-        Schema::drop('{{permissionsTable}}');
+        Schema::drop('{{statesTable}}');
+
+        Schema::drop('{{entitiesTable}}');
     }
 }

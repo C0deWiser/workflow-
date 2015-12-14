@@ -55,7 +55,7 @@ class TablesCommand extends Command
      */
     public function fire()
     {
-        $filePath = app()->make('migration.creator')
+        $filePath = app('migration.creator')
             ->create('create_workflow_tables', app()->databasePath() . '/migrations');
 
         $contents = strtr($this->files->get(__DIR__ . '/stubs/tables.stub'), [
@@ -66,6 +66,7 @@ class TablesCommand extends Command
             '{{statesTable}}' => config('workflow.database.states_table'),
             '{{rolesTable}}' => config('workflow.database.roles_table'),
             '{{permissionsTable}}' => config('workflow.database.permissions_table'),
+            '{{roleUserTable}}' => config('workflow.database.role_user_table'),
         ]);
 
         $this->files->put($filePath, $contents);

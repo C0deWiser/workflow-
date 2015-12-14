@@ -3,16 +3,9 @@
 namespace Media101\Workflow;
 
 use Illuminate\Auth\Access\Gate;
+use Media101\Workflow\Contracts\Workflow as WorkflowContract;
 
-/**
- * Special gate with default user resolver returning "guest" string for not-authenticated user,
- * so that the policy have a chance to allow the guest to perform actions.
- *
- * Besides, with no policies and abilities defined default workflow permissions will be checked.
- *
- * @package Media101\Workflow\Contracts
- */
-class Workflow extends Gate
+class Workflow extends Gate implements WorkflowContract
 {
     public $defaultPolicy = Policy::class;
 

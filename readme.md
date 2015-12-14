@@ -20,6 +20,9 @@ and all the other information;
 
 * Execute `php artisan migrate` to apply the migrations.
 
+* Modify you application user model so that it implements `Media101\Workflow\Contracts\RolesOwner` contract, and
+include `Media101\Workflow\Traits\RolesOwner` trait (recommended)
+
 * (Optional) You might want to configure workflow facade: add the line like
 `'Workflow'  => \Media101\Workflow\Facades\Workflow::class` to the `aliases` array in you `configs/app.php`.
 After that, you can use the module like that: `\Workflow::allows('edit', $post)` in your code.
