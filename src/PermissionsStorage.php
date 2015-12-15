@@ -3,6 +3,7 @@
 namespace Media101\Workflow;
 
 use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Database\Connection;
 use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
 use Media101\Workflow\Models\Entity;
 
@@ -57,8 +58,17 @@ class PermissionsStorage implements PermissionsStorageContract
             return $value;
         }
 
-        // todo fill here
         $permissions = [];
+
+        $builder = app(Connection::class)->table(config('workflow.database.permissions_table'));
+        foreach ($builder->get() as $row) {
+            $permissions[] = [
+                'states' => isset($row['state_id']) ? [ $row['state_id'] ] : null,
+                'relations' => isset($row['relation_id']) ? [ $row['relation_id'] ] : null,
+                'roles' => isset($row['role_id']) ? [ $row['role_id'] ] : null,
+                'features' => isset($row['feature_id']) ? [ $row['feature_id'] ] : null,
+            ];
+        }
 
         $this->permissions[$entity->code][$action] = $permissions;
         $this->cache->forever($cacheKey, $permissions);
