@@ -3,7 +3,11 @@
 namespace Media101\Workflow;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
 use Media101\Workflow\Contracts\RolesOwner;
 use Media101\Workflow\Contracts\WorkflowItem;
@@ -30,9 +34,15 @@ class Policy
      */
     protected $permissions;
 
-    public function __construct(PermissionsStorageContract $permissions)
+    /**
+     * @var Str
+     */
+    protected $str;
+
+    public function __construct(PermissionsStorageContract $permissions, Str $str)
     {
         $this->permissions = $permissions;
+        $this->str = $str;
     }
 
     public function __call($name, $arguments = [])
@@ -43,6 +53,34 @@ class Policy
     }
 
     /**
+     * Filter the eloquent query leaving only items on which certain action can be performed.
+     *
+     * @param string $action
+     * @param EloquentBuilder $queryBuilder
+     * @param Authenticatable|null $user
+     * @return EloquentBuilder
+     */
+    public function filter($action, EloquentBuilder $queryBuilder, Authenticatable $user = null)
+    {
+        $criteria = $this->filterQuery($action, $queryBuilder->getModel(), $user);
+        return $queryBuilder->getQuery()->addNestedWhereQuery($criteria);
+    }
+
+    /**
+     * Filter the eloquent query leaving only items on which certain action CANNOT be performed.
+     *
+     * @param string $action
+     * @param EloquentBuilder $queryBuilder
+     * @param Authenticatable|null $user
+     * @return EloquentBuilder
+     * @throws \Exception
+     */
+    public function except($action, EloquentBuilder $queryBuilder, Authenticatable $user = null)
+    {
+        throw new \Exception('Method Policy::except is not yet implemented. Why would you need it anyway?');
+    }
+
+    /**
      * @param $action
      * @param WorkflowItem $item
      * @param Authenticatable|RolesOwner|null $user
@@ -50,28 +88,92 @@ class Policy
      */
     protected function checkAccess($action, WorkflowItem $item, Authenticatable $user = null)
     {
-        $state = $this->itemState($item);
-        $relations = $this->itemRelations($item, $user);
-        $roles = $this->userRoles($user);
-        $features = $this->itemFeatures($item);
+        $state_key = $this->itemState($item)->id;;
+        $relations_keys = $this->itemRelations($item, $user)->keys()->all();
+        $roles_keys = $this->userRoles($user)->keys()->all();
+        $features_keys = $this->itemFeatures($item)->keys()->all();
 
-        $query = \DB::table(config('workflow.database.permissions_table'))
-            ->select(['hasPermission' => 'COUNT(*) > 0'])
-            ->where([
-                'entity_id' => $item->getEntity()->id,
-                'action_id' => $item->getEntity()->actions->keyBy('code')[$action],
-            ])->where(function(Builder $query) use ($state) {
-                $query->where('state_id', '=', $state->id)->orWhere('state_id IS NULL');
-            });
+        foreach ($this->permissions->permissionsFor($action, $item->getEntity()) as $permission) {
+            if (isset($permission['states']) && !in_array($state_key, $permission['states'])) {
+                continue;
+            }
 
-        foreach (['relation', 'role', 'feature'] as $criterion) {
-            $values = ${"{$criterion}s"};
-            $query->where(function(Builder $query) use($criterion, $values) {
-                $query->where($criterion, 'IN', collect($values)->keyBy('id')->keys())->orWhere("$criterion IS NULL");
+            if (isset($permission['relations']) && !array_intersect($relations_keys, $permission['relations'])) {
+                continue;
+            }
+
+            if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
+                continue;
+            }
+
+            if (isset($permission['features']) && !array_intersect($features_keys, $permission['features'])) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $action
+     * @param WorkflowItem|Model $model
+     * @param Authenticatable|null $user
+     * @return Builder
+     */
+    protected function filterQuery($action, WorkflowItem $model, Authenticatable $user = null)
+    {
+        $queryBuilder = $model->newQueryWithoutScopes()->getQuery();
+        $roles_keys = $this->userRoles($user);
+        $entity = $model->getEntity();
+
+        $noPermission = true;
+        foreach ($this->permissions->permissionsFor($action, $entity) as $permission) {
+            if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
+                continue;
+            }
+
+            $noPermission = false;
+
+            $queryBuilder->orWhere(function(Builder $orBuilder) use($entity, $model, $user) {
+                if (isset($permission['states'])) {
+                    $orBuilder->where([ 'state_id' => $permission['states'] ]);
+                }
+
+                if (isset($permission['relations'])) {
+                    $orBuilder->where(function(Builder $builder) use ($permission, $entity, $model, $user) {
+                        foreach ($entity->relations as $relation) {
+                            if (!in_array($relation->id, $permission['relations'])) {
+                                continue;
+                            }
+                            $builder->orWhere(function(Builder $subBuilder) use($model, $relation, $user) {
+                                return $model->onlyInRelation($subBuilder, $relation->code, $user);
+                            });
+                        }
+                    });
+                }
+
+                if (isset($permission['features'])) {
+                    $orBuilder->where(function(Builder $builder) use ($permission, $entity, $model) {
+                        foreach ($entity->features as $feature) {
+                            if (!in_array($feature->id, $permission['features'])) {
+                                continue;
+                            }
+                            $builder->orWhere(function(Builder $subBuilder) use($model, $feature) {
+                                return $model->onlyHavingFeature($subBuilder, $feature->code);
+                            });
+                        }
+                    });
+                }
             });
         }
 
-        return !! $query->first()->hasPermission;
+        if ($noPermission) {
+            $queryBuilder->where('FALSE');
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -88,32 +190,36 @@ class Policy
     /**
      * @param WorkflowItem $item
      * @param Authenticatable|null $user
-     * @return Relation[]
+     * @return Relation[]|Collection
      */
-    protected function itemRelations(WorkflowItem $item, Authenticatable $user)
+    protected function itemRelations(WorkflowItem $item, Authenticatable $user = null)
     {
-        return array_filter($item->getEntity()->relations, function(Relation $relation) use ($item, $user) {
+        if ($user === null) {
+            return collect([]);
+        }
+
+        $item->getEntity()->relations->filter(function(Relation $relation) use ($item, $user) {
             return $item->isUserInRelation($relation->code, $user);
-        });
+        })->keyBy('id');
     }
 
     /**
      * @param $user
-     * @return Role[]
+     * @return Role[]|Collection
      */
     protected function userRoles(RolesOwner $user = null)
     {
-        return $user->getRoles();
+        return collect($user === null ? [] : $user->getRoles())->keyBy('id');
     }
 
     /**
      * @param WorkflowItem $item
-     * @return Feature[]
+     * @return Feature[]|Collection
      */
     protected function itemFeatures(WorkflowItem $item)
     {
-        return array_filter($item->getEntity()->features, function(Feature $feature) use($item) {
+        return $item->getEntity()->features->filter(function(Feature $feature) use($item) {
             return $item->hasFeature($feature->code);
-        });
+        })->keyBy('id');
     }
 }

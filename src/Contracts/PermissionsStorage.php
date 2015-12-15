@@ -19,4 +19,13 @@ interface PermissionsStorage
      * @return Entity
      */
     public function entity($name);
+
+    /**
+     * Return array containing criteria to be fulfilled to be allowed for specified action
+     *
+     * @param string $action
+     * @param Entity $entity
+     * @return array
+     */
+    public function permissionsFor($action, $entity);
 }

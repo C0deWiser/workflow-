@@ -44,9 +44,7 @@ class WorkflowServiceProvider extends ServiceProvider
      */
     private function registerPermissionsStorage()
     {
-        $this->app->singleton(PermissionsStorageContract::class, function(Application $app) {
-            return new PermissionsStorage();
-        });
+        $this->app->singleton(PermissionsStorageContract::class, PermissionsStorage::class);
     }
 
     /**

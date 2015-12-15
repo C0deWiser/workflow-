@@ -3,6 +3,7 @@
 namespace Media101\Workflow\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Query\Builder;
 use Media101\Workflow\Models\Entity;
 use Media101\Workflow\Models\State;
 
@@ -96,4 +97,23 @@ interface WorkflowItem
      * @return bool
      */
     public function hasFeature($feature);
+
+    /**
+     * Modifies query so that only item in certain relation with the specified user are left
+     *
+     * @param Builder $builder
+     * @param string $relation
+     * @param Authenticatable|null $user
+     * @return Builder
+     */
+    public static function onlyInRelation($builder, $relation, Authenticatable $user = null);
+
+    /**
+     * Modifies query so that only items having specified feature are left
+     *
+     * @param Builder $builder
+     * @param string $feature
+     * @return Builder
+     */
+    public static function onlyHavingFeature($builder, $feature);
 }
