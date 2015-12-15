@@ -36,7 +36,6 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__) . '/config/workflow.php', 'workflow');
         $this->registerPermissionsStorage();
         $this->registerWorkflow();
-        $this->app->singleton(PermissionsStorage::class);
     }
 
     /**
