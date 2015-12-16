@@ -2,6 +2,7 @@
 
 namespace Media101\Workflow\Models;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Relation extends Model
 {
+    /**
+     * Whether or not to store timestamps in `created_at` and `updated_at`
+     * @var bool
+     */
+    public $timestamps = false;
+
     public function __construct(array $attributes = [])
     {
         $this->table = config('workflow.database.relations_table');
@@ -27,5 +34,14 @@ class Relation extends Model
     public function entity()
     {
         return $this->belongsTo(Entity::class, 'entity_id');
+    }
+
+    protected static function boot(Connection $db = null)
+    {
+        parent::boot();
+        static::deleting(function(Relation $relation) use($db) {
+            $db->table(config('workflow.database.permissions_table'))
+                ->where(['relation_id' => $relation->id])->delete();
+        });
     }
 }

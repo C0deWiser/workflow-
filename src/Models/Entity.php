@@ -2,6 +2,7 @@
 
 namespace Media101\Workflow\Models;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -21,6 +22,12 @@ use Illuminate\Support\Collection;
  */
 class Entity extends Model
 {
+    /**
+     * Whether or not to store timestamps in `created_at` and `updated_at`
+     * @var bool
+     */
+    public $timestamps = false;
+
     public function __construct(array $attributes = [])
     {
         $this->table = config('workflow.database.entities_table');
@@ -45,5 +52,20 @@ class Entity extends Model
     public function actions()
     {
         return $this->hasMany(Action::class, 'entity_id');
+    }
+
+    protected static function boot(Connection $db = null)
+    {
+        parent::boot();
+
+        static::deleting(function(Entity $entity) use($db) {
+            $db->table(config('workflow.database.permissions_table'))
+                ->where([ 'entity_id' => $entity->id ])->delete();
+
+            $entity->relations()->delete();
+            $entity->states()->delete();
+            $entity->features()->delete();
+            $entity->actions()->delete();
+        });
     }
 }

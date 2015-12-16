@@ -27,4 +27,9 @@ return [
         'actions'           => [ 'view', 'edit', 'delete' ],
 
     ],
+
+    // List all the classes here. The list will be used when reinitializing workflow metadata.
+    'classes' => [
+
+    ],
 ];

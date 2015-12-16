@@ -7,7 +7,7 @@ the user roles, item states/properties and user-item relationships.
 
 #### Preparations
 
-* Require media101/workflow into `composer.json` (composer is the default way to install this package);
+* Require `media101/workflow` into `composer.json` (composer is the default way to install this package);
 
 * Add the service providers `Media101\Workflow\ConsoleServiceProvider` and `Media101\Workflow\WorkflowServiceProvider`
 to the `providers` list in your application's `configs/app.php`;
@@ -33,4 +33,26 @@ to be used with the workflow access control, and how to configure the permission
 
 #### Adding class to the workflow-controlled
 
+For every class you want to use in the workflow, do the following:
+
+* The class must implement `Media101\Workflow\Contracts\WorkflowItem` contract, it is possible to include the
+`Media101\Workflow\Traits\WorkflowItem` trait which already implements all the required methods.
+
+* Add the class name into workflow extension config under the key `classes`
+
+* Run command `php artisan workflow:reinit` to initialize permissions and metadata for the new model class.
+
+#### Checking permissions
+
+To check user's permission on some item (instance of a class implementing the contract) call the `check` method
+(or it's derivative) on the service implementing the `Media101\Workflow\Contracts\Workflow` contact. Such singleton will
+already be preconfigured in the laravel's dependencies container, so it can be e.g. type-hinted where appropriate.
+
+Eloquent query for the workflow items can be filtered (to only leave the allowed items) by calling the `filter` method
+on the before-mentioned service.
+
 #### Configuring permissions
+
+Configuring is not done as a part of this extension, because it would require some kind of interface. Await for the
+administration interface package from the `Media101` vendor. In the meantime, permissions can be added manually into
+the database table.
