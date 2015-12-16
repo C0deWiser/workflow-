@@ -3,7 +3,6 @@
 namespace Media101\Workflow;
 
 use Illuminate\Auth\Access\Gate;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Builder;
 use Media101\Workflow\Contracts\Workflow as WorkflowContract;
 
