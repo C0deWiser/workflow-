@@ -49,7 +49,8 @@ class Workflow extends Gate implements WorkflowContract
     public function filter($action, Builder $queryBuilder)
     {
         $policy = $this->resolvePolicy($this->defaultQueryPolicy);
-        return $policy->filter($action, $queryBuilder, app(Guard::class)->user());
+        $user = $this->resolveUser();
+        return $policy->filter($action, $queryBuilder, is_object($user) ? $user : null);
     }
 
     /**
@@ -62,6 +63,7 @@ class Workflow extends Gate implements WorkflowContract
     public function except($action, Builder $queryBuilder)
     {
         $policy = $this->resolvePolicy($this->defaultQueryPolicy);
-        return $policy->except($action, $queryBuilder);
+        $user = $this->resolveUser();
+        return $policy->except($action, $queryBuilder, is_object($user) ? $user : null);
     }
 }
