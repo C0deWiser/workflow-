@@ -23,7 +23,7 @@ use Media101\Workflow\Models\State;
  * or one of the relations the item currently has with the user, null feature or one of the features of the current item
  * and null role or one of the roles of the user.
  *
- * So, it any of such allowing records are in the permissions table - access will be granted, and denied otherwise.
+ * So, if any of such allowing records are in the permissions table - access will be granted, and denied otherwise.
  *
  * @package Media101\Workflow
  */
@@ -63,7 +63,8 @@ class Policy
     public function filter($action, EloquentBuilder $queryBuilder, Authenticatable $user = null)
     {
         $criteria = $this->filterQuery($action, $queryBuilder->getModel(), $user);
-        return $queryBuilder->getQuery()->addNestedWhereQuery($criteria);
+        $queryBuilder->getQuery()->addNestedWhereQuery($criteria);
+        return $queryBuilder;
     }
 
     /**
@@ -183,7 +184,7 @@ class Policy
      */
     protected function itemState(WorkflowItem $item)
     {
-        return array_first($item->getEntity()->states, function(State $state) use ($item) {
+        return $item->getEntity()->states->first(function($key, State $state) use ($item) {
             return $state->id == $item->getStateId();
         });
     }
