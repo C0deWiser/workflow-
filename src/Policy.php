@@ -88,7 +88,8 @@ class Policy
      */
     protected function checkAccess($action, WorkflowItem $item, Authenticatable $user = null)
     {
-        $state_key = $this->itemState($item)->id;;
+        $state = $this->itemState($item);
+        $state_key = $state === null ? null : $state->id;
         $relations_keys = $this->itemRelations($item, $user)->keys()->all();
         $roles_keys = $this->userRoles($user)->keys()->all();
         $features_keys = $this->itemFeatures($item)->keys()->all();
@@ -178,7 +179,7 @@ class Policy
 
     /**
      * @param WorkflowItem $item
-     * @return State
+     * @return State|null
      */
     protected function itemState(WorkflowItem $item)
     {

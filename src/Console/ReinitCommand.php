@@ -3,6 +3,7 @@
 namespace Media101\Workflow\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,14 +36,21 @@ class ReinitCommand extends Command
     protected $db;
 
     /**
+     * @var Repository
+     */
+    protected $cache;
+
+    /**
      * Create a new queue job table command instance.
      * @param Connection $db
+     * @param Repository $cache
      */
-    public function __construct(Connection $db)
+    public function __construct(Connection $db, Repository $cache)
     {
         parent::__construct();
 
         $this->db = $db;
+        $this->cache = $cache;
     }
 
     /**
@@ -56,6 +64,12 @@ class ReinitCommand extends Command
         $this->deleteExtraEntities($classesInstances->keys()->all());
         $missingInstances = $this->updateExistingEntities($classesInstances);
         $this->addEntities($missingInstances);
+
+        /**
+         * Fuck, this method is not documented in the contract so the cache driver does not have to implement it.
+         * @todo refactor
+         */
+        $this->cache->flush();
 
         $this->info('Done.');
     }

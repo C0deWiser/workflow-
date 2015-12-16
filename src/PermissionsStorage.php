@@ -63,9 +63,9 @@ class PermissionsStorage implements PermissionsStorageContract
         $builder = app(Connection::class)->table(config('workflow.database.permissions_table'))
             ->where([
                 'entity_id' => $entity->id,
-                'action_id' => $entity->actions->first(function($act) use($action) {
+                'action_id' => $entity->actions->filter(function($act) use($action) {
                     return $act->code === $action;
-                })->id,
+                })->first()->id,
             ]);
         foreach ($builder->get() as $row) {
             $permissions[] = [
