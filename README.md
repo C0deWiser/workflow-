@@ -42,7 +42,13 @@ For every class you want to use in the workflow, do the following:
 
 * Run command `php artisan workflow:reinit` to initialize permissions and metadata for the new model class.
 
-#### Checking permissions
+#### Configuring permissions
+
+Configuring is not done as a part of this extension, because it would require some kind of interface. Await for the
+administration interface package from the `Media101` vendor. In the meantime, permissions can be added manually into
+the database table.
+
+### Usage
 
 To check user's permission on some item (instance of a class implementing the contract) call the `check` method
 (or it's derivative) on the service implementing the `Media101\Workflow\Contracts\Workflow` contact. Such singleton will
@@ -50,9 +56,3 @@ already be preconfigured in the laravel's dependencies container, so it can be e
 
 Eloquent query for the workflow items can be filtered (to only leave the allowed items) by calling the `filter` method
 on the before-mentioned service.
-
-#### Configuring permissions
-
-Configuring is not done as a part of this extension, because it would require some kind of interface. Await for the
-administration interface package from the `Media101` vendor. In the meantime, permissions can be added manually into
-the database table.
