@@ -55,20 +55,26 @@ class PermissionsStorage implements PermissionsStorageContract
 
         $cacheKey = $this->cacheKey . '-' . $entity->code;
         if (($value = $this->cache->get($cacheKey)) !== null) {
-            return $value;
+            foreach ($value as $actionCode => $permissions) {
+                $this->permissions[$entity->code][$actionCode] = $permissions;
+            }
+            return $value[$action];
         }
 
-        $permissions = [];
+        $actionsPermissions = [];
+        $actions = $entity->actions->pluck('code', 'id');
+        foreach ($actions as $actionCode) {
+            $actionsPermissions[$actionCode] = [];
+        }
 
         $builder = app(Connection::class)->table(config('workflow.database.permissions_table'))
             ->where([
                 'entity_id' => $entity->id,
-                'action_id' => $entity->actions->filter(function($act) use($action) {
-                    return $act->code === $action;
-                })->first()->id,
             ]);
         foreach ($builder->get() as $row) {
-            $permissions[] = [
+            $action_id = $row['action_id'];
+            /* @var string $action_id */
+            $actionsPermissions[$actions[$action_id]][] = [
                 'states' => isset($row['state_id']) ? [ $row['state_id'] ] : null,
                 'relations' => isset($row['relation_id']) ? [ $row['relation_id'] ] : null,
                 'roles' => isset($row['role_id']) ? [ $row['role_id'] ] : null,
@@ -76,9 +82,11 @@ class PermissionsStorage implements PermissionsStorageContract
             ];
         }
 
-        $this->permissions[$entity->code][$action] = $permissions;
-        $this->cache->forever($cacheKey, $permissions);
-        return $permissions;
+        foreach ($actionsPermissions as $actionCode => $permissions) {
+            $this->permissions[$entity->code][$actionCode] = $permissions;
+        }
+        $this->cache->forever($cacheKey, $actionsPermissions);
+        return $actionsPermissions[$action];
     }
 
     protected function load()
