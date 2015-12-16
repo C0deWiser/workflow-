@@ -15,6 +15,11 @@ use Media101\Workflow\Models\Entity;
 class PermissionsStorage implements PermissionsStorageContract
 {
     /**
+     * @var Connection
+     */
+    protected $db;
+
+    /**
      * @var Repository
      */
     protected $cache;
@@ -30,9 +35,10 @@ class PermissionsStorage implements PermissionsStorageContract
      */
     protected $entities = [];
 
-    public function __construct(Repository $cache)
+    public function __construct(Repository $cache, Connection $db)
     {
         $this->cache = $cache;
+        $this->db = $db;
     }
 
     /**
@@ -67,18 +73,16 @@ class PermissionsStorage implements PermissionsStorageContract
             $actionsPermissions[$actionCode] = [];
         }
 
-        $builder = app(Connection::class)->table(config('workflow.database.permissions_table'))
+        $builder = $this->db->table(config('workflow.database.permissions_table'))
             ->where([
                 'entity_id' => $entity->id,
             ]);
         foreach ($builder->get() as $row) {
-            $action_id = $row['action_id'];
-            /* @var string $action_id */
-            $actionsPermissions[$actions[$action_id]][] = [
-                'states' => isset($row['state_id']) ? [ $row['state_id'] ] : null,
-                'relations' => isset($row['relation_id']) ? [ $row['relation_id'] ] : null,
-                'roles' => isset($row['role_id']) ? [ $row['role_id'] ] : null,
-                'features' => isset($row['feature_id']) ? [ $row['feature_id'] ] : null,
+            $actionsPermissions[$actions[$row->action_id]][] = [
+                'states' => isset($row->state_id) ? [ $row->state_id ] : null,
+                'relations' => isset($row->relation_id) ? [ $row->relation_id ] : null,
+                'roles' => isset($row->role_id) ? [ $row->role_id ] : null,
+                'features' => isset($row->feature_id) ? [ $row->feature_id ] : null,
             ];
         }
 
