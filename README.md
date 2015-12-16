@@ -56,3 +56,12 @@ already be preconfigured in the laravel's dependencies container, so it can be e
 
 Eloquent query for the workflow items can be filtered (to only leave the allowed items) by calling the `filter` method
 on the before-mentioned service.
+
+### Advanced subjects
+
+#### Default states
+
+If you want instances of your class to be created with some initial state, include the 
+`Media101\Workflow\Traits\WorkflowDefaultState` trait into your workflow class. By default, the first state returned
+by `workflowStates` will be assigned on model creation, but you can override the method `initState` to do anything
+you want.
