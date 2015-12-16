@@ -3,6 +3,7 @@
 namespace Media101\Workflow;
 
 use Illuminate\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Builder;
 use Media101\Workflow\Contracts\Workflow as WorkflowContract;
 
@@ -48,7 +49,7 @@ class Workflow extends Gate implements WorkflowContract
     public function filter($action, Builder $queryBuilder)
     {
         $policy = $this->resolvePolicy($this->defaultQueryPolicy);
-        return $policy->filter($action, $queryBuilder);
+        return $policy->filter($action, $queryBuilder, app(Guard::class)->user());
     }
 
     /**
