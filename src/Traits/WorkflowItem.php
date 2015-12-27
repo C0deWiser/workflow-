@@ -108,35 +108,35 @@ trait WorkflowItem
     /**
      * Modifies query so that only item in certain relation with the specified user are left.
      *
-     * Defaults to calling static methods like `onlyAsOwner`, but you can instead override this method.
+     * Defaults to calling methods like `scopeAsOwner`, but you can instead override this method.
      *
      * @param Builder $builder
      * @param string $relation
      * @param Authenticatable|null $user
      * @return Builder
      */
-    public static function onlyInRelation($builder, $relation, Authenticatable $user = null)
+    public function scopeInRelation(Builder $builder, $relation, Authenticatable $user = null)
     {
         if ($user === null) {
-            return $builder->where('FALSE');
+            return $builder->whereRaw('FALSE');
         }
 
-        $method = 'onlyAs' . app(Str::class)->studly($relation);
-        return static::$method($builder, $user);
+        $method = 'scopeAs' . app(Str::class)->studly($relation);
+        return $this->$method($builder, $user);
     }
 
     /**
      * Modifies query so that only items having specified feature are left.
      *
-     * Default to calling static methods like `onlyBeingOpen` or `onlyBeingActive`.
+     * Default to calling methods like `scopeBeingOpen` or `scopeBeingActive`.
      *
      * @param Builder $builder
      * @param string $feature
      * @return Builder
      */
-    public static function onlyHavingFeature($builder, $feature)
+    public function scopeHavingFeature(Builder $builder, $feature)
     {
-        $method = 'onlyBeing' . app(Str::class)->studly($feature);
-        return static::$method($builder);
+        $method = 'scopeBeing' . app(Str::class)->studly($feature);
+        return $this->$method($builder);
     }
 }

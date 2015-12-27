@@ -41,7 +41,7 @@ class Feature extends Model
         parent::boot();
         static::deleting(function(Feature $feature) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where(['feature_id' => $feature->id])->delete();
+                ->where('feature_id', $feature->id)->delete();
         });
     }
 }

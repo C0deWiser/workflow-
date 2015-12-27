@@ -62,9 +62,7 @@ class Policy
      */
     public function filter($action, EloquentBuilder $queryBuilder, Authenticatable $user = null)
     {
-        $criteria = $this->filterQuery($action, $queryBuilder->getModel(), $user);
-        $queryBuilder->getQuery()->addNestedWhereQuery($criteria);
-        return $queryBuilder;
+        return $this->filterQuery($action, $queryBuilder, $user);
     }
 
     /**
@@ -120,13 +118,14 @@ class Policy
 
     /**
      * @param string $action
-     * @param WorkflowItem|Model $model
+     * @param EloquentBuilder $query
      * @param Authenticatable|null $user
      * @return Builder
      */
-    protected function filterQuery($action, WorkflowItem $model, Authenticatable $user = null)
+    protected function filterQuery($action, EloquentBuilder $query, Authenticatable $user = null)
     {
-        $queryBuilder = $model->newQueryWithoutScopes()->getQuery();
+        $model = $query->getModel();
+        /* @var WorkflowItem|Model $model */
         $roles_keys = $this->userRoles($user);
         $entity = $model->getEntity();
 
@@ -138,32 +137,34 @@ class Policy
 
             $noPermission = false;
 
-            $queryBuilder->orWhere(function(Builder $orBuilder) use($entity, $model, $user) {
+            $query->orWhere(function(EloquentBuilder $orBuilder) use ($entity, $model, $user, $permission) {
                 if (isset($permission['states'])) {
-                    $orBuilder->where([ 'state_id' => $permission['states'] ]);
+                    $orBuilder->whereIn('state_id', $permission['states']);
                 }
 
                 if (isset($permission['relations'])) {
-                    $orBuilder->where(function(Builder $builder) use ($permission, $entity, $model, $user) {
-                        foreach ($entity->relations as $relation) {
+                    $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model, $user) {
+                        foreach ($entity->relationships as $relation) {
                             if (!in_array($relation->id, $permission['relations'])) {
                                 continue;
                             }
-                            $builder->orWhere(function(Builder $subBuilder) use($model, $relation, $user) {
-                                return $model->onlyInRelation($subBuilder, $relation->code, $user);
+                            $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $relation, $user) {
+                                $query = $model::inRelation($relation->code, $user)->getQuery();
+                                $subBuilder->mergeWheres($query->wheres, $query->getBindings());
                             });
                         }
                     });
                 }
 
                 if (isset($permission['features'])) {
-                    $orBuilder->where(function(Builder $builder) use ($permission, $entity, $model) {
+                    $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model) {
                         foreach ($entity->features as $feature) {
                             if (!in_array($feature->id, $permission['features'])) {
                                 continue;
                             }
-                            $builder->orWhere(function(Builder $subBuilder) use($model, $feature) {
-                                return $model->onlyHavingFeature($subBuilder, $feature->code);
+                            $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $feature) {
+                                $query = $model::havingFeature($feature->code)->getQuery();
+                                $subBuilder->mergeWheres($query->wheres, $query->getBindings());
                             });
                         }
                     });
@@ -172,10 +173,10 @@ class Policy
         }
 
         if ($noPermission) {
-            $queryBuilder->where('FALSE');
+            $query->whereRaw('FALSE');
         }
 
-        return $queryBuilder;
+        return $query;
     }
 
     /**
@@ -200,7 +201,7 @@ class Policy
             return collect([]);
         }
 
-        $item->getEntity()->relations->filter(function(Relation $relation) use ($item, $user) {
+        $item->getEntity()->relationships->filter(function(Relation $relation) use ($item, $user) {
             return $item->isUserInRelation($relation->code, $user);
         })->keyBy('id');
     }

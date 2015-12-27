@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  * @property string $name
  *
  * @property State[]|Collection $states
- * @property Relation[]|Collection $relations
+ * @property Relation[]|Collection $relationships
  * @property Feature[]|Collection $features
  * @property Action[]|Collection $actions
  *
@@ -39,7 +39,7 @@ class Entity extends Model
         return $this->hasMany(State::class, 'entity_id');
     }
 
-    public function relations()
+    public function relationships()
     {
         return $this->hasMany(Relation::class, 'entity_id');
     }
@@ -54,15 +54,59 @@ class Entity extends Model
         return $this->hasMany(Action::class, 'entity_id');
     }
 
+    /**
+     * @param string $code
+     * @return State
+     */
+    public function findState($code)
+    {
+        return $this->states->first(function($key, State $state) use ($code) {
+            return $state->code === $code;
+        });
+    }
+
+    /**
+     * @param string $code
+     * @return Relation
+     */
+    public function findRelation($code)
+    {
+        return $this->relationships->first(function($key, Relation $relation) use ($code) {
+            return $relation->code === $code;
+        });
+    }
+
+    /**
+     * @param string $code
+     * @return Feature
+     */
+    public function findFeature($code)
+    {
+        return $this->features->first(function($key, Feature $feature) use ($code) {
+            return $feature->code === $code;
+        });
+    }
+
+    /**
+     * @param string $code
+     * @return Action
+     */
+    public function findAction($code)
+    {
+        return $this->actions->first(function($key, Action $action) use ($code) {
+            return $action->code === $code;
+        });
+    }
+
     protected static function boot(Connection $db = null)
     {
         parent::boot();
 
         static::deleting(function(Entity $entity) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where([ 'entity_id' => $entity->id ])->delete();
+                ->where('entity_id', $entity->id)->delete();
 
-            $entity->relations()->delete();
+            $entity->relationships()->delete();
             $entity->states()->delete();
             $entity->features()->delete();
             $entity->actions()->delete();

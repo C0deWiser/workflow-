@@ -41,7 +41,7 @@ class Relation extends Model
         parent::boot();
         static::deleting(function(Relation $relation) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where(['relation_id' => $relation->id])->delete();
+                ->where('relation_id', $relation->id)->delete();
         });
     }
 }

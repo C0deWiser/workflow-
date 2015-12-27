@@ -41,7 +41,7 @@ class State extends Model
         parent::boot();
         static::deleting(function(State $state) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where(['state_id' => $state->id])->delete();
+                ->where('state_id', $state->id)->delete();
         });
     }
 }

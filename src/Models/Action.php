@@ -41,7 +41,7 @@ class Action extends Model
         parent::boot();
         static::deleting(function(Action $action) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where(['action_id' => $action->id])->delete();
+                ->where('action_id', $action->id)->delete();
         });
     }
 }

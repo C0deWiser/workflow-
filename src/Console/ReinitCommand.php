@@ -7,6 +7,7 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Media101\Workflow\Contracts\WorkflowItem;
 use Media101\Workflow\Models\Action;
 use Media101\Workflow\Models\Entity;
@@ -92,13 +93,21 @@ class ReinitCommand extends Command
      */
     protected function deleteExtraEntities($actualCodes)
     {
-        $entities = Entity::query()->where('code', 'NOT IN', $actualCodes)->getQuery()->select('id');
+        $entities = Entity::query()->whereNotIn('code', $actualCodes)->getQuery()->select('id');
+
+        $whereInEntities = function(QueryBuilder $queryBuilder) use ($entities) {
+            $queryBuilder->select($entities->columns)->from($entities->from)
+                ->mergeWheres($entities->wheres, $entities->getBindings());
+        };
+
+        /* @var QueryBuilder $entities */
+        $query = State::query()->getQuery()->whereIn('entity_id', $whereInEntities);
         $this->db->table(config('workflow.database.permissions_table'))
-            ->where('entity_id', 'IN', $entities)->delete();
-        Relation::query()->where('entity_id', 'IN', $entities)->delete();
-        State::query()->where('entity_id', 'IN', $entities)->delete();
-        Action::query()->where('entity_id', 'IN', $entities)->delete();
-        Feature::query()->where('entity_id', 'IN', $entities)->delete();
+            ->whereIn('entity_id', $whereInEntities)->delete();
+        Relation::query()->whereIn('entity_id', $whereInEntities)->delete();
+        State::query()->whereIn('entity_id', $whereInEntities)->delete();
+        Action::query()->whereIn('entity_id', $whereInEntities)->delete();
+        Feature::query()->whereIn('entity_id', $whereInEntities)->delete();
         $entities->delete();
     }
 
@@ -136,22 +145,30 @@ class ReinitCommand extends Command
      */
     protected function updateEntity(Entity $entity, WorkflowItem $instance)
     {
-        $relations = Relation::query()->where('entity_id', '=', $entity->id);
-        $states = State::query()->where('entity_id', '=', $entity->id);
-        $features = Feature::query()->where('entity_id', '=', $entity->id);
-        $actions = Action::query()->where('entity_id', '=', $entity->id);
+        $relations = Relation::query()->where('entity_id', $entity->id);
+        $states = State::query()->where('entity_id', $entity->id);
+        $features = Feature::query()->where('entity_id', $entity->id);
+        $actions = Action::query()->where('entity_id', $entity->id);
+        $extraRelations = $extraStates = $extraFeatures = $extraActions = null;
 
         // delete extra permissions, actions, states, relations and features and add missing
-        $permissions = $this->db->table(config('workflow.database.permissions_table'));
+        $permissions = $this->db->table(config('workflow.database.permissions_table'))
+                ->where('entity_id', $entity->id)
+                ->where(function (QueryBuilder $builder) use ($relations, $states, $features, $actions, $instance,
+                                                    &$extraRelations, &$extraStates, &$extraFeatures, &$extraActions) {
+            foreach (['relation', 'state', 'feature', 'action'] as $kind) {
+                $extra = ${'extra' . ucfirst($kind) . 's'} = clone ${$kind . 's'};
+                /* @var Builder $extra */
+                $extra->whereNotIn('code', $instance->{'workflow' . ucfirst($kind) . 's'}());
+                $query = $extra->getQuery()->select('id');
+                $builder->orWhereIn($kind . '_id', function(QueryBuilder $queryBuilder) use ($query) {
+                    $queryBuilder->select($query->columns)->from($query->from)
+                        ->mergeWheres($query->wheres, $query->getBindings());
+                });
+            }
+        });
 
-        foreach (['relation', 'state', 'feature', 'action'] as $kind) {
-            $extra = ${'extra' . ucfirst($kind) . 's'} = clone ${$kind . 's'};
-            /* @var Builder $extra */
-            $extra->where('code', 'NOT IN', $instance->{'workflow' . ucfirst($kind) . 's'}());
-            $permissions->orWhere($kind . '_id', 'IN', $extra->getQuery()->select('id'));
-        }
-
-        $permissions->where('entity_id', '=', $entity->id)->delete();
+        $permissions->where('entity_id', $entity->id)->delete();
 
         foreach (['relation', 'state', 'feature', 'action'] as $kind) {
             ${'extra' . ucfirst($kind) . 's'}->delete();

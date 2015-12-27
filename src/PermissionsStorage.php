@@ -99,7 +99,7 @@ class PermissionsStorage implements PermissionsStorageContract
             return;
         }
 
-        $entities = Entity::with('states', 'relations', 'features', 'actions')->get()->keyBy('code');
+        $entities = Entity::with('states', 'relationships', 'features', 'actions')->get()->keyBy('code');
         $this->entities = $entities->all();
 
         $this->loaded = true;

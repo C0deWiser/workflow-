@@ -33,7 +33,7 @@ class Role extends Model
         parent::boot();
         static::deleting(function(Role $role) use($db) {
             $db->table(config('workflow.database.permissions_table'))
-                ->where(['role_id' => $role->id])->delete();
+                ->where('role_id', $role->id)->delete();
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace Media101\Workflow\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Media101\Workflow\Models\Entity;
 use Media101\Workflow\Models\State;
@@ -60,7 +61,7 @@ interface WorkflowItem
     public function getEntity();
 
     /**
-     * Return state identified (without loading the state from the database, if possible)
+     * Return state identifier (without loading the state from the database, if possible)
      *
      * @return number
      */
@@ -99,21 +100,21 @@ interface WorkflowItem
     public function hasFeature($feature);
 
     /**
-     * Modifies query so that only item in certain relation with the specified user are left
+     * Scope leaving only those records having a particular relation to the user.
      *
-     * @param Builder $builder
+     * @param EloquentBuilder $query
      * @param string $relation
      * @param Authenticatable|null $user
-     * @return Builder
+     * @return EloquentBuilder
      */
-    public static function onlyInRelation($builder, $relation, Authenticatable $user = null);
+    public function scopeInRelation(EloquentBuilder $query, $relation, Authenticatable $user = null);
 
     /**
-     * Modifies query so that only items having specified feature are left
+     * Scope containing records having certain feature.
      *
-     * @param Builder $builder
+     * @param EloquentBuilder $query
      * @param string $feature
-     * @return Builder
+     * @return EloquentBuilder
      */
-    public static function onlyHavingFeature($builder, $feature);
+    public function scopeHavingFeature(EloquentBuilder $query, $feature);
 }
