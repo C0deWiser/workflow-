@@ -44,6 +44,11 @@ class Entity extends Model
         return $this->hasMany(Relation::class, 'entity_id');
     }
 
+    public function relations()
+    {
+        return $this->relationships();
+    }
+
     public function features()
     {
         return $this->hasMany(Feature::class, 'entity_id');

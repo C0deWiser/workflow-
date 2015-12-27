@@ -94,6 +94,10 @@ class Policy
         $features_keys = $this->itemFeatures($item)->keys()->all();
 
         foreach ($this->permissions->permissionsFor($action, $item->getEntity()) as $permission) {
+            if ($permission['authenticated'] && $user === null) {
+                continue;
+            }
+
             if (isset($permission['states']) && !in_array($state_key, $permission['states'])) {
                 continue;
             }
@@ -131,6 +135,10 @@ class Policy
 
         $noPermission = true;
         foreach ($this->permissions->permissionsFor($action, $entity) as $permission) {
+            if ($permission['authenticated'] && $user === null) {
+                continue;
+            }
+
             if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
                 continue;
             }
