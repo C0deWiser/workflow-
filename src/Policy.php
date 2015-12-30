@@ -209,7 +209,7 @@ class Policy
             return collect([]);
         }
 
-        $item->getEntity()->relationships->filter(function(Relation $relation) use ($item, $user) {
+        return $item->getEntity()->relationships->filter(function(Relation $relation) use ($item, $user) {
             return $item->isUserInRelation($relation->code, $user);
         })->keyBy('id');
     }

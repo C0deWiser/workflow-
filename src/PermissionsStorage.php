@@ -83,6 +83,7 @@ class PermissionsStorage implements PermissionsStorageContract
                 'relations' => isset($row->relation_id) ? [ $row->relation_id ] : null,
                 'roles' => isset($row->role_id) ? [ $row->role_id ] : null,
                 'features' => isset($row->feature_id) ? [ $row->feature_id ] : null,
+                'authenticated' => $row->authenticated,
             ];
         }
 
