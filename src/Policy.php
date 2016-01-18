@@ -128,61 +128,73 @@ class Policy
      */
     protected function filterQuery($action, EloquentBuilder $query, Authenticatable $user = null)
     {
-        $model = $query->getModel();
-        /* @var WorkflowItem|Model $model */
-        $roles_keys = $this->userRoles($user);
-        $entity = $model->getEntity();
+        $query->where(function (EloquentBuilder $subQuery) use ($action, $user) {
+            $model = $subQuery->getModel();
+            /* @var WorkflowItem|Model $model */
+            $roles_keys = $this->userRoles($user);
+            $entity = $model->getEntity();
 
-        $noPermission = true;
-        foreach ($this->permissions->permissionsFor($action, $entity) as $permission) {
-            if ($permission['authenticated'] && $user === null) {
-                continue;
+            $noPermission = true;
+
+            foreach ($this->permissions->permissionsFor($action, $entity) as $permission) {
+                if ($permission['authenticated'] && $user === null) {
+                    continue;
+                }
+
+                if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
+                    continue;
+                }
+
+                $noPermission = false;
+
+                $subQuery->orWhere(function(EloquentBuilder $orBuilder) use ($entity, $model, $user, $permission) {
+                    $unconditional = true;
+
+                    if (isset($permission['states'])) {
+                        $orBuilder->whereIn('state_id', $permission['states']);
+                        $unconditional = false;
+                    }
+
+                    if (isset($permission['relations'])) {
+                        $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model, $user) {
+                            foreach ($entity->relationships as $relation) {
+                                if (!in_array($relation->id, $permission['relations'])) {
+                                    continue;
+                                }
+                                $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $relation, $user) {
+                                    $query = $model::inRelation($relation->code, $user)->getQuery();
+                                    $subBuilder->mergeWheres($query->wheres, $query->getBindings());
+                                });
+                            }
+                        });
+                        $unconditional = false;
+                    }
+
+                    if (isset($permission['features'])) {
+                        $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model) {
+                            foreach ($entity->features as $feature) {
+                                if (!in_array($feature->id, $permission['features'])) {
+                                    continue;
+                                }
+                                $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $feature) {
+                                    $query = $model::havingFeature($feature->code)->getQuery();
+                                    $subBuilder->mergeWheres($query->wheres, $query->getBindings());
+                                });
+                            }
+                        });
+                        $unconditional = false;
+                    }
+
+                    if ($unconditional) {
+                        $orBuilder->whereRaw('1=1');
+                    }
+                });
             }
 
-            if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
-                continue;
+            if ($noPermission) {
+                $subQuery->whereRaw('FALSE');
             }
-
-            $noPermission = false;
-
-            $query->orWhere(function(EloquentBuilder $orBuilder) use ($entity, $model, $user, $permission) {
-                if (isset($permission['states'])) {
-                    $orBuilder->whereIn('state_id', $permission['states']);
-                }
-
-                if (isset($permission['relations'])) {
-                    $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model, $user) {
-                        foreach ($entity->relationships as $relation) {
-                            if (!in_array($relation->id, $permission['relations'])) {
-                                continue;
-                            }
-                            $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $relation, $user) {
-                                $query = $model::inRelation($relation->code, $user)->getQuery();
-                                $subBuilder->mergeWheres($query->wheres, $query->getBindings());
-                            });
-                        }
-                    });
-                }
-
-                if (isset($permission['features'])) {
-                    $orBuilder->where(function(EloquentBuilder $builder) use ($permission, $entity, $model) {
-                        foreach ($entity->features as $feature) {
-                            if (!in_array($feature->id, $permission['features'])) {
-                                continue;
-                            }
-                            $builder->orWhere(function(EloquentBuilder $subBuilder) use($model, $feature) {
-                                $query = $model::havingFeature($feature->code)->getQuery();
-                                $subBuilder->mergeWheres($query->wheres, $query->getBindings());
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        if ($noPermission) {
-            $query->whereRaw('FALSE');
-        }
+        });
 
         return $query;
     }
