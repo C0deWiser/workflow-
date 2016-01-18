@@ -59,6 +59,7 @@ class PermissionsStorage implements PermissionsStorageContract
             return $this->permissions[$entity->code][$action];
         }
 
+        // Attempt to retrieve from cache, where we store all the permissions per entity
         $cacheKey = $this->cacheKey . '-' . $entity->code;
         if (($value = $this->cache->get($cacheKey)) !== null) {
             foreach ($value as $actionCode => $permissions) {
@@ -100,8 +101,13 @@ class PermissionsStorage implements PermissionsStorageContract
             return;
         }
 
+        if (($entities = $this->cache->get($this->cacheKey)) !== null) {
+            $this->entities = $entities;
+            return;
+        }
+
         $entities = Entity::with('states', 'relationships', 'features', 'actions')->get()->keyBy('code');
-        $this->entities = $entities->all();
+        $this->cache->forever($this->cacheKey, $this->entities = $entities->all());
 
         $this->loaded = true;
     }
