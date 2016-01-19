@@ -70,7 +70,8 @@ class PermissionsStorage implements PermissionsStorageContract
 
         $actionsPermissions = [];
         $actions = $entity->actions->pluck('code', 'id');
-        foreach ($actions as $actionCode) {
+        $states = $entity->states->pluck('code', 'id');
+        foreach ($actions->merge($states) as $actionCode) {
             $actionsPermissions[$actionCode] = [];
         }
 
@@ -79,7 +80,8 @@ class PermissionsStorage implements PermissionsStorageContract
                 'entity_id' => $entity->id,
             ]);
         foreach ($builder->get() as $row) {
-            $actionsPermissions[$actions[$row->action_id]][] = [
+            $code = isset($row->action_id) ? $actions[$row->action_id] : $states[$row->target_state_id];
+            $actionsPermissions[$code][] = [
                 'states' => isset($row->state_id) ? [ $row->state_id ] : null,
                 'relations' => isset($row->relation_id) ? [ $row->relation_id ] : null,
                 'roles' => isset($row->role_id) ? [ $row->role_id ] : null,
