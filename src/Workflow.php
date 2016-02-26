@@ -5,6 +5,7 @@ namespace Media101\Workflow;
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Media101\Workflow\Contracts\Workflow as WorkflowContract;
+use Media101\Workflow\Contracts\WorkflowItem;
 
 class Workflow extends Gate implements WorkflowContract
 {
@@ -14,18 +15,23 @@ class Workflow extends Gate implements WorkflowContract
 
     /**
      * @inheritdoc
+     *
+     * Workflow items always correspond to a policy.
      */
-    protected function resolveAuthCallback($user, $ability, array $arguments)
+    protected function firstArgumentCorrespondsToPolicy(array $arguments)
     {
-        if ($this->firstArgumentCorrespondsToPolicy($arguments) || !isset($this->abilities[$ability])) {
-            return $this->resolvePolicyCallback($user, $ability, $arguments);
-        } else {
-            return $this->abilities[$ability];
+        if (isset($arguments[0]) && is_object($arguments[0]) &&
+                class_implements($arguments[0], WorkflowItem::class)) {
+            return true;
         }
+
+        return parent::firstArgumentCorresponsedToPolicy($arguments);
     }
 
     /**
      * @inheritdoc
+     *
+     * Overriden to always apply default policy (for WorkflowItem).
      */
     public function getPolicyFor($class)
     {
@@ -35,8 +41,10 @@ class Workflow extends Gate implements WorkflowContract
 
         if (isset($this->policies[$class])) {
             $policy = $this->policies[$class];
-        } else {
+        } elseif (class_implements($class, WorkflowItem::class)) {
             $policy = $this->defaultPolicy;
+        } else {
+            throw new \InvalidArgumentException("Policy not defined for [{$class}].");
         }
 
         return $this->resolvePolicy($policy);
