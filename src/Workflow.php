@@ -25,7 +25,7 @@ class Workflow extends Gate implements WorkflowContract
             return true;
         }
 
-        return parent::firstArgumentCorresponsedToPolicy($arguments);
+        return parent::firstArgumentCorrespondsToPolicy($arguments);
     }
 
     /**
