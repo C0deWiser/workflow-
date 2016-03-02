@@ -141,7 +141,7 @@ class Policy
                     continue;
                 }
 
-                if (isset($permission['roles']) && !array_intersect($roles_keys, $permission['roles'])) {
+                if (isset($permission['roles']) && !$roles_keys->intersect($permission['roles'])) {
                     continue;
                 }
 
