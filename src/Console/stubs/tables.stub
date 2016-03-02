@@ -17,7 +17,7 @@ class CreateWorkflowTables extends Migration
             $table->string('code');
             $table->string('name')->nullable()->default(null);
 
-            $table->index('code');
+            $table->unique('code');
         });
 
         Schema::create('{{statesTable}}', function (Blueprint $table) {
@@ -27,7 +27,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->index('code');
+            $table->unique('code');
         });
 
         Schema::create('{{relationsTable}}', function (Blueprint $table) {
@@ -37,7 +37,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->index('code');
+            $table->unique('code');
         });
 
         Schema::create('{{featuresTable}}', function (Blueprint $table) {
@@ -47,7 +47,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->index('code');
+            $table->unique('code');
         });
 
         Schema::create('{{actionsTable}}', function (Blueprint $table) {
@@ -57,13 +57,15 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->index('code');
+            $table->unique('code');
         });
 
         Schema::create('{{rolesTable}}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code');
             $table->string('name')->nullable()->default(null);
+
+            $table->unique('code');
         });
 
         Schema::create('{{permissionsTable}}', function (Blueprint $table) {
