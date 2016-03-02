@@ -7,6 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
 use Media101\Workflow\Contracts\Workflow as WorkflowContract;
+use Illuminate\Contracts\Auth\Access\Gate;
 
 class WorkflowServiceProvider extends ServiceProvider
 {
@@ -56,6 +57,7 @@ class WorkflowServiceProvider extends ServiceProvider
                 return app(Guard::class)->user() ?: "guest";
             });
         });
+        $this->app->singleton(Gate::class, WorkflowContract::class);
     }
 
     /**
