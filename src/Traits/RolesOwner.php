@@ -2,8 +2,9 @@
 
 namespace Media101\Workflow\Traits;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Media101\Workflow\Models\Role;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Default implementation for contract
@@ -14,14 +15,33 @@ use Media101\Workflow\Models\Role;
  */
 trait RolesOwner
 {
+    /**
+     * @return BelongsToMany|Role[]|Collection
+     */
     public function roles()
     {
         /* @var $this \Illuminate\Database\Eloquent\Model */
         return $this->belongsToMany(Role::class, 'workflow_user_role', 'user_id', 'role_id');
     }
 
+    /**
+     * @return Role[]|Collection
+     */
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * @param Role|Role[]|Collection $roles
+     */
+    public function addRole($roles)
+    {
+        $this->roles()->attach($roles);
+    }
+
+    public function clearRoles()
+    {
+        $this->roles()->detach();
     }
 }
