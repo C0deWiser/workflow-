@@ -65,6 +65,6 @@ class WorkflowServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ WorkflowContract::class, PermissionsStorageContract::class ];
+        return [ Gate::class, WorkflowContract::class, PermissionsStorageContract::class ];
     }
 }
