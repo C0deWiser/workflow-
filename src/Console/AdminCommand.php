@@ -19,7 +19,8 @@ class AdminCommand extends Command
      */
     protected $signature = 'workflow:admin
                             {roleName=admin : The name of the role created}
-                            {--N|no-assign : Skip assigning the role to the first user}';
+                            {--N|no-assign : Skip assigning the role to the first user}
+                            {--u|user-id=1 : Assign to this user (ignored if --no-assign specified)}';
 
     /**
      * The console command description.
@@ -38,7 +39,7 @@ class AdminCommand extends Command
 
 
         if (!$this->option('no-assign')) {
-            $user = User::findOrFail(1);
+            $user = User::findOrFail($this->option('user-id'));
             /* @var $user RolesOwner */
             $user->addRole($role);
             $this->info('Role attached to the user "' . $user . '"');
