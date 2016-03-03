@@ -67,7 +67,7 @@ class AdminCommand extends Command
                     'entity_id' => $entity->id,
                     'action_id' => $action->id,
                     'role_id' => $role->id,
-                    'state_id' => null,
+                    'target_state_id' => null,
                 ];
             }
             foreach ($entity->states as $state) {
@@ -75,7 +75,7 @@ class AdminCommand extends Command
                     'entity_id' => $entity->id,
                     'action_id' => null,
                     'role_id' => $role->id,
-                    'state_id' => $state->id,
+                    'target_state_id' => $state->id,
                 ];
             }
         }
