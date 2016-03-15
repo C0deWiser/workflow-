@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Role extends Model
 {
+    public $fillable = ['code', 'name'];
+
     /**
      * Whether or not to store timestamps in `created_at` and `updated_at`
      * @var bool
@@ -28,11 +30,11 @@ class Role extends Model
         parent::__construct($attributes);
     }
 
-    protected static function boot(Connection $db = null)
+    protected static function boot()
     {
         parent::boot();
-        static::deleting(function(Role $role) use($db) {
-            $db->table(config('workflow.database.permissions_table'))
+        static::deleting(function(Role $role) {
+            app(Connection::class)->table(config('workflow.database.permissions_table'))
                 ->where('role_id', $role->id)->delete();
         });
     }
