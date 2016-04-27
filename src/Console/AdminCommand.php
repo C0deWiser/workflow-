@@ -31,8 +31,10 @@ class AdminCommand extends Command
 
     public function handle(PermissionsStorage $storage, Connection $db)
     {
-        $role = $this->createRole($this->argument('roleName'));
-        $this->info('Role "' . $role->code . '" created.');
+        if (!($role = Role::where(['code' => $this->argument('roleName')])->first())) {
+            $role = $this->createRole($this->argument('roleName'));
+            $this->info('Role "' . $role->code . '" created.');
+        }
 
         $this->assignAllPermissions($role, $storage, $db);
         $this->info('All permissions has been assigned to the role "' . $role->code . '"');
