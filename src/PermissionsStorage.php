@@ -105,6 +105,7 @@ class PermissionsStorage implements PermissionsStorageContract
 
         if (($entities = $this->cache->get($this->cacheKey)) !== null) {
             $this->entities = $entities;
+            $this->loaded = true;
             return;
         }
 
