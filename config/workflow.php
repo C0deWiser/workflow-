@@ -24,7 +24,7 @@ return [
 
     'defaults' => [
 
-        'actions'           => [ 'view', 'edit', 'delete' ],
+        'actions'           => [ 'list', 'view', 'add', 'edit', 'delete' ],
 
     ],
 
