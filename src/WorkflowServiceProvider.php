@@ -12,13 +12,6 @@ use Illuminate\Contracts\Auth\Access\Gate;
 class WorkflowServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    public $defer = true;
-
-    /**
      * Bootstrap the module
      */
     public function boot()
@@ -27,6 +20,7 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->publishes([
             dirname(__DIR__) . '/config/workflow.php' => config_path('workflow.php'),
         ]);
+        $this->extendValidator();
     }
 
     /**
@@ -37,6 +31,18 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__) . '/config/workflow.php', 'workflow');
         $this->registerPermissionsStorage();
         $this->registerWorkflow();
+    }
+
+    private function extendValidator()
+    {
+        $app = $this->app;
+        $app->make('validator')->extend('can', function ($attribute, $value, $parameters, $validator) use ($app) {
+            $class = $parameters[0];
+            if (!($entity = $class::find($value))) {
+                return false;
+            }
+            return $app->make(WorkflowContract::class)->allows($parameters[1], $entity);
+        });
     }
 
     /**
