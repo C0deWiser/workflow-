@@ -31,7 +31,6 @@ class WorkflowServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__) . '/config/workflow.php', 'workflow');
         $this->registerPermissionsStorage();
         $this->registerWorkflow();
-        $this->registerAliases();
     }
 
     private function extendValidator()
@@ -65,14 +64,6 @@ class WorkflowServiceProvider extends ServiceProvider
             });
         });
         $this->app->singleton(Gate::class, WorkflowContract::class);
-    }
-
-    /**
-     * Register aliases.
-     */
-    private function registerAliases()
-    {
-        $this->app->alias('Form', \Collective\Html\FormFacade::class);
     }
 
     /**
