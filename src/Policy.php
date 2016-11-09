@@ -124,7 +124,7 @@ class Policy
      * @param string $action
      * @param EloquentBuilder $query
      * @param Authenticatable|null $user
-     * @return Builder
+     * @return Builder|\Illuminate\Database\Eloquent\Builder
      */
     protected function filterQuery($action, EloquentBuilder $query, Authenticatable $user = null)
     {
@@ -205,7 +205,7 @@ class Policy
      */
     protected function itemState(WorkflowItem $item)
     {
-        return $item->getEntity()->states->first(function($key, State $state) use ($item) {
+        return $item->getEntity()->states->first(function(State $state) use ($item) {
             return $state->id == $item->getStateId();
         });
     }

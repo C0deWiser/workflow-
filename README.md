@@ -3,9 +3,14 @@
 This package provides support for setting access permissions to different workflow entities based on
 the user roles, item states/properties and user-item relationships.
 
-### Installation
+## Compatible Laravel 5.x versions
 
-#### Preparations
+This version (2.*) of admin package is only compatible with Laravel 5.3. For use with 
+Laravel 5.2 please see 1.* versions of this package.
+
+## Installation
+
+### Preparations
 
 * Require `media101/workflow` into `composer.json` (composer is the default way to install this package);
 
@@ -26,7 +31,7 @@ include `Media101\Workflow\Traits\RolesOwner` trait (recommended)
 This will conclude the preliminary configuration, the following steps will show how to connect some model class
 to be used with the workflow access control, and how to configure the permissions.
 
-#### Adding class to the workflow-controlled
+### Adding class to the workflow-controlled
 
 For every class you want to use in the workflow, do the following:
 
@@ -39,7 +44,7 @@ For every class you want to use in the workflow, do the following:
 
 *The command `workflow:reinit` MUST be run every time you recreate table or drop cache, or pull code with new workflow entities.*
 
-##### Fine-tuning class behavior
+#### Fine-tuning class behavior
 
 In workflow model suggested by this package, each model has list of actions (override `Entity::workflowActions` to
 set this list),  features (override `Entity::workflowFeatures`) and relations with user (override `Entity::workflowRelation`).
@@ -47,7 +52,7 @@ For each defined feature, e.g `important` method `Entity#isImportant` called on 
 entity instance has this feature; for each relation e.g. `manager` method `Entity#isUserManager($user)` must determine
 if the user has certain relation with this entity.
 
-#### Configuring permissions
+### Configuring permissions
 
 Configuring is not done as a part of this extension, because it would require some kind of interface.
 `media101\admin-workflow` is one of the packages which have interface to configure permissions provided with this package.
@@ -62,9 +67,9 @@ type-hinted where appropriate. Also, if your have defined `Gate` facade, you can
 Eloquent query for the workflow items can be filtered (to only leave the allowed items) by calling the `filter` method
 on the before-mentioned service.
 
-### Advanced subjects
+## Advanced subjects
 
-#### Default states
+### Default states
 
 If you want instances of your class to be created with some initial state, include the
 `Media101\Workflow\Traits\WorkflowDefaultState` trait into your workflow class. By default, the first state returned

@@ -65,7 +65,7 @@ class Entity extends Model
      */
     public function findState($code)
     {
-        return $this->states->first(function($key, State $state) use ($code) {
+        return $this->states->first(function(State $state) use ($code) {
             return $state->code === $code;
         });
     }
@@ -76,7 +76,7 @@ class Entity extends Model
      */
     public function findRelation($code)
     {
-        return $this->relationships->first(function($key, Relation $relation) use ($code) {
+        return $this->relationships->first(function(Relation $relation) use ($code) {
             return $relation->code === $code;
         });
     }
@@ -87,7 +87,7 @@ class Entity extends Model
      */
     public function findFeature($code)
     {
-        return $this->features->first(function($key, Feature $feature) use ($code) {
+        return $this->features->first(function(Feature $feature) use ($code) {
             return $feature->code === $code;
         });
     }
@@ -98,7 +98,7 @@ class Entity extends Model
      */
     public function findAction($code)
     {
-        return $this->actions->first(function($key, Action $action) use ($code) {
+        return $this->actions->first(function(Action $action) use ($code) {
             return $action->code === $code;
         });
     }
