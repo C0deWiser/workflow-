@@ -27,7 +27,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->unique('code');
+            $table->unique(['entity_id', 'code']);
         });
 
         Schema::create('{{relationsTable}}', function (Blueprint $table) {
@@ -37,7 +37,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->unique('code');
+            $table->unique(['entity_id', 'code']);
         });
 
         Schema::create('{{featuresTable}}', function (Blueprint $table) {
@@ -47,7 +47,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->unique('code');
+            $table->unique(['entity_id', 'code']);
         });
 
         Schema::create('{{actionsTable}}', function (Blueprint $table) {
@@ -57,7 +57,7 @@ class CreateWorkflowTables extends Migration
             $table->string('name')->nullable()->default(null);
 
             $table->foreign('entity_id')->references('id')->on('{{entitiesTable}}')->onDelete('cascade');
-            $table->unique('code');
+            $table->unique(['entity_id', 'code']);
         });
 
         Schema::create('{{rolesTable}}', function (Blueprint $table) {
