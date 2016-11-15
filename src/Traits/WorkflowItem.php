@@ -12,6 +12,7 @@ use Media101\Workflow\Models\State;
 
 /**
  * Trait intended for classes which will be subjects to the workflow.
+ * Only fits for Eloquent models.
  *
  * @property number $state_id
  * @property State $state

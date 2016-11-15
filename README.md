@@ -67,6 +67,8 @@ type-hinted where appropriate. Also, if your have defined `Gate` facade, you can
 Eloquent query for the workflow items can be filtered (to only leave the allowed items) by calling the `filter` method
 on the before-mentioned service.
 
+You can protect access on whole Laravel resource by using the `Media101\Admin\Http\Middleware\WorkflowMiddleware` middleware.
+
 ## Advanced subjects
 
 ### Default states
