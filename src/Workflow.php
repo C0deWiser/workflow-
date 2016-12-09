@@ -52,6 +52,7 @@ class Workflow extends Gate implements WorkflowContract
 
     /**
      * @inheritdoc
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function filter($action, Builder $queryBuilder)
     {
@@ -64,8 +65,8 @@ class Workflow extends Gate implements WorkflowContract
      * Filters only those records user is NOT allowed to apply specified action to.
      *
      * @param string $action
-     * @param Builder $queryBuilder
-     * @return Builder
+     * @param \Illuminate\Database\Eloquent\Builder $queryBuilder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function except($action, Builder $queryBuilder)
     {
