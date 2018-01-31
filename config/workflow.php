@@ -4,6 +4,8 @@ return [
 
     'database' => [
 
+        'users_table' => 'users',
+
         'permissions_table' => 'workflow_permissions',
 
         'entities_table'    => 'workflow_entities',

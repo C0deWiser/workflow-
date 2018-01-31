@@ -53,12 +53,13 @@ class TablesCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $filePath = app('migration.creator')
             ->create('create_workflow_tables', app()->databasePath() . '/migrations');
 
         $contents = strtr($this->files->get(__DIR__ . '/stubs/tables.stub'), [
+            '{{usersTable}}' => config('workflow.database.users_table'),
             '{{entitiesTable}}' => config('workflow.database.entities_table'),
             '{{actionsTable}}' => config('workflow.database.actions_table'),
             '{{relationsTable}}' => config('workflow.database.relations_table'),

@@ -59,7 +59,7 @@ class ReinitCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $classesInstances = $this->buildClassesInstances();
         $this->deleteExtraEntities($classesInstances->keys()->all());

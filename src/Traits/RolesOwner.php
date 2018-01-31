@@ -21,7 +21,7 @@ trait RolesOwner
     public function roles()
     {
         /* @var $this \Illuminate\Database\Eloquent\Model */
-        return $this->belongsToMany(Role::class, 'workflow_user_role', 'user_id', 'role_id');
+        return $this->belongsToMany(Role::class, config('workflow.database.role_user_table'), 'user_id', 'role_id');
     }
 
     /**
