@@ -60,7 +60,7 @@ class WorkflowServiceProvider extends ServiceProvider
     {
         $this->app->singleton(WorkflowContract::class, function(Application $app) {
             return new Workflow($app, function() use($app) {
-                return app(Guard::class)->user() ?: "guest";
+                return app(Guard::class)->user();
             });
         });
         $this->app->singleton(Gate::class, WorkflowContract::class);
