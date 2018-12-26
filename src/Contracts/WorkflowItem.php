@@ -68,6 +68,13 @@ interface WorkflowItem
     public function getStateId();
 
     /**
+     * Set state id without checking.
+     *
+     * @param number $stateId
+     */
+    public function setStateId($stateId);
+
+    /**
      * Return state of this item (as an object)
      *
      * @return State

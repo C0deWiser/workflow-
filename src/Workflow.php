@@ -74,4 +74,21 @@ class Workflow extends Gate implements WorkflowContract
         $user = $this->resolveUser();
         return $policy->except($action, $queryBuilder, is_object($user) ? $user : null);
     }
+
+    public function transitions(WorkflowItem $item)
+    {
+        $policy = $this->resolvePolicy($this->defaultPolicy);
+        $user = $this->resolveUser();
+        return $policy->transitions($item, $user);
+    }
+
+    public function transit(WorkflowItem $item, $state)
+    {
+        $policy = $this->resolvePolicy($this->defaultPolicy);
+        $user = $this->resolveUser();
+        if (gettype($state) === 'string') {
+            $state = $item->getEntity()->findState($state);
+        }
+        return $policy->transit($item, $state, $user);
+    }
 }

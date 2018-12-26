@@ -40,6 +40,11 @@ trait AbstractWorkflowItem
         return null;
     }
 
+    public function setStateId($stateId)
+    {
+        return $this;
+    }
+
     public function state()
     {
         return null;

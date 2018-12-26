@@ -97,6 +97,15 @@ class PermissionsStorage implements PermissionsStorageContract
         return $actionsPermissions[$action];
     }
 
+    public function transitionsFor($entity)
+    {
+        $transitions = [];
+        foreach ($entity->states as $state) {
+            $transitions[$state->code] = $this->permissionsFor($state->code, $entity);
+        }
+        return $transitions;
+    }
+
     protected function load()
     {
         if ($this->loaded) {

@@ -28,4 +28,13 @@ interface PermissionsStorage
      * @return array
      */
     public function permissionsFor($action, $entity);
+
+    /**
+     * Return associative array indexed by transition (state) name contains criteria to be fulfilled to be allowed
+     * to perform the transition.
+     *
+     * @param Entity $entity
+     * @return array
+     */
+    public function transitionsFor($entity);
 }

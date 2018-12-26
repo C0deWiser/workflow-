@@ -2,6 +2,7 @@
 
 namespace Media101\Workflow;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -77,6 +78,23 @@ class Policy
     public function except($action, EloquentBuilder $queryBuilder, Authenticatable $user = null)
     {
         throw new \Exception('Method Policy::except is not yet implemented. Why would you need it anyway?');
+    }
+
+    public function transitions(WorkflowItem $item, Authenticatable $user = null)
+    {
+        return $item->getEntity()->states->filter(function (State $state) use($item, $user) {
+            return $this->checkAccess($state->code, $item, $user);
+        })->all();
+    }
+
+    public function transit(WorkflowItem $item, State $state, Authenticatable $user = null)
+    {
+        if (!$this->checkAccess($state->code, $item, $user)) {
+            throw new AuthorizationException('В доступе отказано', 403);
+        }
+
+        $item->setStateId($state->id);
+        $item->save();
     }
 
     /**

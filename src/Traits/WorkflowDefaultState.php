@@ -17,7 +17,9 @@ trait WorkflowDefaultState
     public function initState()
     {
         /* @var WorkflowItemContract $this */
-        $this->state_id = $this->getEntity()->states->first()->id;
+        if (!$this->state) {
+            $this->state_id = $this->getEntity()->states->first()->id;
+        }
     }
 
     public static function bootWorkflowDefaultState()

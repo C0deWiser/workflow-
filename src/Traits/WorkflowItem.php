@@ -39,6 +39,13 @@ trait WorkflowItem
         return $this->state_id;
     }
 
+    public function setStateId($stateId)
+    {
+        $this->state()->associate($stateId);
+
+        return $this;
+    }
+
     public function state()
     {
         /* @var $this Model */

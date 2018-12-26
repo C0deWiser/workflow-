@@ -4,6 +4,7 @@ namespace Media101\Workflow\Contracts;
 
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Builder;
+use Media101\Workflow\Models\State;
 
 /**
  * Special gate with default user resolver returning "guest" string for not-authenticated user,
@@ -23,4 +24,19 @@ interface Workflow extends Gate
      * @return Builder
      */
     public function filter($action, Builder $queryBuilder);
+
+    /**
+     * Возвращает список переходов, разрешенных текущему пользователю
+     *
+     * @param WorkflowItem $item
+     * @return array|State[]
+     */
+    public function transitions(WorkflowItem $item);
+
+    /**
+     * Перевести сущность в указанное состояние
+     * @param WorkflowItem $item
+     * @param string|State $state
+     */
+    public function transit(WorkflowItem $item, $state);
 }
