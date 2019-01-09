@@ -41,6 +41,8 @@ trait WorkflowItem
 
     public function setStateId($stateId)
     {
+        // Походу, нет такого метода...
+        unset($this->relations['state']);
         $this->state()->associate($stateId);
 
         return $this;

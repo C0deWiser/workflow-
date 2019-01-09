@@ -18,7 +18,8 @@ trait WorkflowDefaultState
     {
         /* @var WorkflowItemContract $this */
         if (!$this->state) {
-            $this->state_id = $this->getEntity()->states->first()->id;
+            $state = $this->getEntity()->states->first();
+            $this->setStateId($state->getKey());
         }
     }
 
