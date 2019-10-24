@@ -1,6 +1,6 @@
 <?php
 
-namespace Media101\Workflow;
+namespace Codewiser\Workflow;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -9,13 +9,13 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
-use Media101\Workflow\Contracts\RolesOwner;
-use Media101\Workflow\Contracts\WorkflowItem;
-use Media101\Workflow\Models\Feature;
-use Media101\Workflow\Models\Relation;
-use Media101\Workflow\Models\Role;
-use Media101\Workflow\Models\State;
+use Codewiser\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
+use Codewiser\Workflow\Contracts\RolesOwner;
+use Codewiser\Workflow\Contracts\WorkflowItem;
+use Codewiser\Workflow\Models\Feature;
+use Codewiser\Workflow\Models\Relation;
+use Codewiser\Workflow\Models\Role;
+use Codewiser\Workflow\Models\State;
 
 /**
  * Workflow policy allows action (ability) on item if there is a permission written in the permissions storage
@@ -26,7 +26,7 @@ use Media101\Workflow\Models\State;
  *
  * So, if any of such allowing records are in the permissions table - access will be granted, and denied otherwise.
  *
- * @package Media101\Workflow
+ * @package Codewiser\Workflow
  */
 class Policy
 {

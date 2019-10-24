@@ -1,14 +1,14 @@
 <?php
 
-namespace Media101\Workflow\Traits;
+namespace Codewiser\Workflow\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Media101\Workflow\Contracts\PermissionsStorage;
-use Media101\Workflow\Models\State;
+use Codewiser\Workflow\Contracts\PermissionsStorage;
+use Codewiser\Workflow\Models\State;
 
 /**
  * Trait intended for classes which will be subjects to the workflow.
@@ -17,7 +17,7 @@ use Media101\Workflow\Models\State;
  * @property number $state_id
  * @property State $state
  *
- * @package Media101\Workflow\Traits
+ * @package Codewiser\Workflow\Traits
  */
 trait WorkflowItem
 {

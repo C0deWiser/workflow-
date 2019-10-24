@@ -1,12 +1,12 @@
 <?php
 
-namespace Media101\Workflow;
+namespace Codewiser\Workflow;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Media101\Workflow\Console\ReinitCommand;
-use Media101\Workflow\Console\TablesCommand;
-use Media101\Workflow\Console\AdminCommand;
+use Codewiser\Workflow\Console\ReinitCommand;
+use Codewiser\Workflow\Console\TablesCommand;
+use Codewiser\Workflow\Console\AdminCommand;
 
 class ConsoleServiceProvider extends ServiceProvider
 {

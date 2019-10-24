@@ -1,9 +1,9 @@
 <?php
 
-namespace Media101\Workflow\Traits;
+namespace Codewiser\Workflow\Traits;
 
 use Illuminate\Support\Collection;
-use Media101\Workflow\Models\Role;
+use Codewiser\Workflow\Models\Role;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @property Role[]|Collection $roles
  *
- * @package Media101\Workflow\Traits
+ * @package Codewiser\Workflow\Traits
  */
 trait RolesOwner
 {

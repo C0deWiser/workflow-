@@ -1,14 +1,14 @@
 <?php
 
-namespace Media101\Workflow\Contracts;
+namespace Codewiser\Workflow\Contracts;
 
 use Illuminate\Support\Collection;
-use Media101\Workflow\Models\Role;
+use Codewiser\Workflow\Models\Role;
 
 /**
  * Class for users which can be assigned roles
  *
- * @package Media101\Workflow\Contracts
+ * @package Codewiser\Workflow\Contracts
  */
 interface RolesOwner
 {

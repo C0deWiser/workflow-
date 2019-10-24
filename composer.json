@@ -1,7 +1,7 @@
 {
-    "name": "media101/workflow",
+    "name": "codewiser/workflow",
     "description": "Module handling authorization - access control to workflow entities.",
-    "keywords": ["laravel", "101media", "workflow"],
+    "keywords": ["laravel", "workflow", "policy", "gate", "permissions", "admin", "authorization", "access", "codewiser"],
     "license": "proprietary",
     "authors": [
         {
@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Media101\\Workflow\\": "src/"
+            "Codewiser\\Workflow\\": "src/"
         }
     }
 }

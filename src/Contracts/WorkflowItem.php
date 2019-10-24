@@ -1,19 +1,19 @@
 <?php
 
-namespace Media101\Workflow\Contracts;
+namespace Codewiser\Workflow\Contracts;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
-use Media101\Workflow\Models\Entity;
-use Media101\Workflow\Models\State;
+use Codewiser\Workflow\Models\Entity;
+use Codewiser\Workflow\Models\State;
 
 /**
  * Contract to be implemented by all the class participating in the workflow.
  *
  * @property State $state
  *
- * @package Media101\Workflow\Contracts
+ * @package Codewiser\Workflow\Contracts
  */
 interface WorkflowItem
 {

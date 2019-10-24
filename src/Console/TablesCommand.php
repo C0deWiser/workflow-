@@ -1,6 +1,6 @@
 <?php
 
-namespace Media101\Workflow\Console;
+namespace Codewiser\Workflow\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;

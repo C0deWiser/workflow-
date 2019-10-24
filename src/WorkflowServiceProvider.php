@@ -1,12 +1,12 @@
 <?php
 
-namespace Media101\Workflow;
+namespace Codewiser\Workflow;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
-use Media101\Workflow\Contracts\Workflow as WorkflowContract;
+use Codewiser\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
+use Codewiser\Workflow\Contracts\Workflow as WorkflowContract;
 use Illuminate\Contracts\Auth\Access\Gate;
 
 class WorkflowServiceProvider extends ServiceProvider

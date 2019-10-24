@@ -1,6 +1,6 @@
 <?php
 
-namespace Media101\Workflow\Console;
+namespace Codewiser\Workflow\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Cache\Repository;
@@ -8,12 +8,12 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Media101\Workflow\Contracts\WorkflowItem;
-use Media101\Workflow\Models\Action;
-use Media101\Workflow\Models\Entity;
-use Media101\Workflow\Models\Feature;
-use Media101\Workflow\Models\Relation;
-use Media101\Workflow\Models\State;
+use Codewiser\Workflow\Contracts\WorkflowItem;
+use Codewiser\Workflow\Models\Action;
+use Codewiser\Workflow\Models\Entity;
+use Codewiser\Workflow\Models\Feature;
+use Codewiser\Workflow\Models\Relation;
+use Codewiser\Workflow\Models\State;
 
 class ReinitCommand extends Command
 {
@@ -174,7 +174,7 @@ class ReinitCommand extends Command
             ${'extra' . ucfirst($kind) . 's'}->delete();
             foreach (array_diff($instance->{'workflow' . ucfirst($kind) . 's'}(),
                     ${$kind . 's'}->get(['code'])->pluck('code')->all()) as $code) {
-                $class = 'Media101\Workflow\Models\\' . ucfirst($kind);
+                $class = 'Codewiser\Workflow\Models\\' . ucfirst($kind);
                 $item = new $class;
                 $item->code = $code;
                 $entity->{$kind . 's'}()->save($item);

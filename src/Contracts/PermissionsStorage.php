@@ -1,13 +1,13 @@
 <?php
 
-namespace Media101\Workflow\Contracts;
+namespace Codewiser\Workflow\Contracts;
 
-use Media101\Workflow\Models\Entity;
+use Codewiser\Workflow\Models\Entity;
 
 /**
  * Class stores raw permissions and should not be directly used, Workflow gate should be preferred.
  *
- * @package Media101\Workflow\Contracts
+ * @package Codewiser\Workflow\Contracts
  */
 interface PermissionsStorage
 {

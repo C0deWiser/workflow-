@@ -1,16 +1,16 @@
 <?php
 
-namespace Media101\Workflow;
+namespace Codewiser\Workflow;
 
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Connection;
-use Media101\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
-use Media101\Workflow\Models\Entity;
+use Codewiser\Workflow\Contracts\PermissionsStorage as PermissionsStorageContract;
+use Codewiser\Workflow\Models\Entity;
 
 /**
  * Service keeps some workflow data alive in memory to avoid repetitive requests to the database.
  *
- * @package Media101\Workflow
+ * @package Codewiser\Workflow
  */
 class PermissionsStorage implements PermissionsStorageContract
 {

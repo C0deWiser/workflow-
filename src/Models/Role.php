@@ -1,6 +1,6 @@
 <?php
 
-namespace Media101\Workflow\Models;
+namespace Codewiser\Workflow\Models;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $code
  * @property string $name
  *
- * @package Media101\Workflow\Models
+ * @package Codewiser\Workflow\Models
  */
 class Role extends Model
 {

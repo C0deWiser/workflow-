@@ -1,11 +1,11 @@
 <?php
 
-namespace Media101\Workflow;
+namespace Codewiser\Workflow;
 
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Builder;
-use Media101\Workflow\Contracts\Workflow as WorkflowContract;
-use Media101\Workflow\Contracts\WorkflowItem;
+use Codewiser\Workflow\Contracts\Workflow as WorkflowContract;
+use Codewiser\Workflow\Contracts\WorkflowItem;
 
 class Workflow extends Gate implements WorkflowContract
 {

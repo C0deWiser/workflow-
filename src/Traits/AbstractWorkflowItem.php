@@ -1,17 +1,17 @@
 <?php
 
-namespace Media101\Workflow\Traits;
+namespace Codewiser\Workflow\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
-use Media101\Workflow\Contracts\PermissionsStorage;
+use Codewiser\Workflow\Contracts\PermissionsStorage;
 
 /**
  * Trait intended for classes which will be subjects to the workflow.
  * Fits for items not representing some concrete objects, but rather abstract notions.
  *
- * @package Media101\Workflow\Traits
+ * @package Codewiser\Workflow\Traits
  */
 trait AbstractWorkflowItem
 {

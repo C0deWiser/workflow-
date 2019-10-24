@@ -1,13 +1,13 @@
 <?php
 
-namespace Media101\Workflow\Console;
+namespace Codewiser\Workflow\Console;
 
 use Illuminate\Console\Command;
-use Media101\Workflow\Models\Role;
+use Codewiser\Workflow\Models\Role;
 use App\User;
-use Media101\Workflow\Contracts\RolesOwner;
-use Media101\Workflow\Contracts\PermissionsStorage;
-use Media101\Workflow\Contracts\WorkflowItem;
+use Codewiser\Workflow\Contracts\RolesOwner;
+use Codewiser\Workflow\Contracts\PermissionsStorage;
+use Codewiser\Workflow\Contracts\WorkflowItem;
 use Illuminate\Database\Connection;
 
 class AdminCommand extends Command

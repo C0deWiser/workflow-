@@ -1,6 +1,6 @@
 <?php
 
-namespace Media101\Workflow\Http\Middleware;
+namespace Codewiser\Workflow\Http\Middleware;
 
 use Illuminate\Http\Request;
 

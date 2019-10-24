@@ -1,10 +1,10 @@
 <?php
 
-namespace Media101\Workflow\Contracts;
+namespace Codewiser\Workflow\Contracts;
 
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Builder;
-use Media101\Workflow\Models\State;
+use Codewiser\Workflow\Models\State;
 
 /**
  * Special gate with default user resolver returning "guest" string for not-authenticated user,
@@ -14,7 +14,7 @@ use Media101\Workflow\Models\State;
  *
  * Besides, with no policies and abilities defined default workflow permissions will be checked.
  *
- * @package Media101\Workflow\Contracts
+ * @package Codewiser\Workflow\Contracts
  */
 interface Workflow extends Gate
 {

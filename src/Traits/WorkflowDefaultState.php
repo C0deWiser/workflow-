@@ -1,16 +1,16 @@
 <?php
 
-namespace Media101\Workflow\Traits;
+namespace Codewiser\Workflow\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Media101\Workflow\Contracts\WorkflowItem as WorkflowItemContract;
+use Codewiser\Workflow\Contracts\WorkflowItem as WorkflowItemContract;
 
 /**
  * The trait will enable class to set the initial workflow state. By default it will be the first
  * state returned in workflow states array, but you can override method `initState` to set to
  * any state you want.
  *
- * @package Media101\Workflow\Traits
+ * @package Codewiser\Workflow\Traits
  */
 trait WorkflowDefaultState
 {

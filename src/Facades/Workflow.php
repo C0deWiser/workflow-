@@ -1,12 +1,12 @@
 <?php
 
-namespace Media101\Workflow\Facades;
+namespace Codewiser\Workflow\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Media101\Workflow\Contracts\Workflow as WorkflowContract;
+use Codewiser\Workflow\Contracts\Workflow as WorkflowContract;
 
 /**
- * @see \Media101\Workflow\Contracts\Workflow
+ * @see \Codewiser\Workflow\Contracts\Workflow
  */
 class Workflow extends Facade
 {
