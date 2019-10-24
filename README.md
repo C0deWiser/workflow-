@@ -1,3 +1,5 @@
+[![Latest Stable Version](https://poser.pugx.org/codewiser/workflow/version)](https://packagist.org/packages/codewiser/workflow)
+
 ## Workflow access manager for laravel applications
 
 This package provides support for setting access permissions to different workflow entities based on
